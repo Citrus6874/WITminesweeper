@@ -23,23 +23,15 @@ public class NewGameDialog extends JDialog {
 	private JRadioButton expertButton;
 	private JRadioButton customButton;
 	
-	private JSeparator separator_1;
 	private JTextField verticalTilesField;
-	private JSeparator separator_2;
 	private JTextField horizontalTilesField;
-	private JSeparator separator_3;
 	private JTextField minesField;
-	private JSeparator separator_4;
+	private JButton btnCreateNewGame;
+	private JLabel warningLabel;
 	
-	public int getVerticalTiles(){
-		return Integer.parseInt(verticalTilesField.getText());
-	}
-	public int getHorizontalTiles(){
-		return Integer.parseInt(horizontalTilesField.getText());
-	}
-	public int getMines(){
-		return Integer.parseInt(minesField.getText());
-	}
+	public int getVerticalTiles(){ return verticalTiles;}
+	public int getHorizontalTiles(){ return horizontalTiles;}
+	public int getMines(){ return mines;}
 	
 	public NewGameDialog(JFrame F, boolean B,int verticalTiles_, int horizontalTiles_, int mines_){
 		super(F, B);
@@ -56,6 +48,7 @@ public class NewGameDialog extends JDialog {
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		/* Top panel with radio buttons: */
 		group = new ButtonGroup();
 		radioPanel = new JPanel();
@@ -106,46 +99,69 @@ public class NewGameDialog extends JDialog {
 		   		}});
 		   	beginnerButton.setSelected(true); //set beginnerButton as the default button
 		   	radioPanel.add(beginnerButton);
-		   	radioPanel.add(intermediateButton);
 		   	radioPanel.add(expertButton);
+		   	radioPanel.add(intermediateButton);
 		   	radioPanel.add(customButton);
 		//radioPanel is then placed in topPanel
 		topPanel.add(radioPanel);
 		   	
-		/* Middle Panel: */
+		/* Create middle panel: */
 		getContentPane().add(middlePanel = new JPanel(), BorderLayout.CENTER);
-		/* Create custom input area: */
+		/* Create custom input area using middle panel: */
 		middlePanel.setLayout(new BoxLayout(middlePanel, 0));
-			middlePanel.add(separator_1 = new JSeparator());
+		
 			middlePanel.add(new JLabel("Vertical Tiles: ")); //vertical label
 			middlePanel.add(verticalTilesField = new JTextField(Integer.toString(verticalTiles), 2));
 			verticalTilesField.setEnabled(false);
-			//middlePanel.add(separator_2 = new JSeparator());
+			
 			middlePanel.add(new JLabel("Horizontal Tiles: ")); //horizontal label
 			middlePanel.add(horizontalTilesField = new JTextField(Integer.toString(horizontalTiles), 2));
 			horizontalTilesField.setEnabled(false);
-			//middlePanel.add(separator_3 = new JSeparator());
+			
 			middlePanel.add(new JLabel("Mines: "));
 			middlePanel.add(minesField = new JTextField(Integer.toString(mines), 2));
 			minesField.setEnabled(false);
-		//getContentPane().add(middlePanel);
-	
-		/* Bottom panel: */
 		
-		getContentPane().add(bottomPanel = new JPanel(), BorderLayout.SOUTH);
-			JButton btnCreateNewGame = new JButton("Create New Game");
+	
+		/* Create bottom panel and add a New Game button to it: */
+		getContentPane().add(bottomPanel = new JPanel(), BorderLayout.CENTER);
+		bottomPanel.setLayout(new GridLayout(2, 3));
+		bottomPanel.add(new JLabel("     "));
+		bottomPanel.add(btnCreateNewGame = new JButton("Create New Game"));
+		bottomPanel.add(new JLabel("     "));
+		bottomPanel.add(new JLabel("     "));
+		bottomPanel.add(warningLabel = new JLabel("Select a difficulty mode for minesweeper, or enter custom values."));
+		bottomPanel.add(new JLabel("     "));
+		/* Set up New Game button: */
 			btnCreateNewGame.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					verticalTiles = Integer.parseInt(verticalTilesField.getText());
-					horizontalTiles = Integer.parseInt(horizontalTilesField.getText());
-					mines = Integer.parseInt(minesField.getText());
-					dispose();
+					if(isInteger(verticalTilesField.getText()) && isInteger(horizontalTilesField.getText()) && isInteger(minesField.getText())){
+						//must be at least 2 by 2 to generate. There is no max size, allowing high resoultion users to max out the display
+						if(1 < Integer.parseInt(verticalTilesField.getText()) && 1 < Integer.parseInt(horizontalTilesField.getText()) && 0 < Integer.parseInt(minesField.getText())){
+							verticalTiles = Integer.parseInt(verticalTilesField.getText());
+							horizontalTiles = Integer.parseInt(horizontalTilesField.getText());
+							mines = Integer.parseInt(minesField.getText());
+							dispose();
+						}else{
+							warningLabel.setText("Board must be at least 2 by 2. It must have at least 1 mine");
+						}
+					}else{
+						warningLabel.setText("Custom inputs must be integer values!");
+					}
 				}
 			});
-		bottomPanel.add(btnCreateNewGame);
 		
 		pack();
 		setLocationRelativeTo(null);
-	}	
+	}
+	
+	private boolean isInteger(String inputString) {
+	      try {
+	         Integer.parseInt(inputString);
+	         return true;
+	      } catch (NumberFormatException e) {
+	         return false;
+	      }
+	   }
 }
