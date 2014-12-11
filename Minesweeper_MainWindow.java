@@ -22,7 +22,7 @@ public class Minesweeper_MainWindow extends JFrame{
     private JMenu mnFile;
     private JMenuItem mntmNewGame;
     private JMenuItem mntmExitGame;
-    private JMenu mnGame;
+    //private JMenu mnGame;
     private JMenuItem mntmRestart;
     private JMenuItem mntmGameOptions;
     
@@ -68,8 +68,13 @@ public class Minesweeper_MainWindow extends JFrame{
                 //exit game menu item:
                 mntmExitGame = new JMenuItem("Exit Game");
                 mntmExitGame.setToolTipText("Closes Minesweeper.");
-            /* Game menu: */
-            menuBar.add(mnGame = new JMenu("Game"));
+                mntmExitGame.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.exit(-1);
+                    }});
+            /* Game menu (does not do anything): */
+//            menuBar.add(mnGame = new JMenu("Game"));
                 //restart menu item:
                 mntmRestart = new JMenuItem("Restart");
                 mntmRestart.setToolTipText("New game (keeps current size).");
@@ -88,9 +93,9 @@ public class Minesweeper_MainWindow extends JFrame{
         mnFile.addSeparator();
         mnFile.add(mntmExitGame);
 
-        mnGame.add(mntmRestart);
-        mnGame.addSeparator();
-        mnGame.add(mntmGameOptions);
+//        mnGame.add(mntmRestart);
+//        mnGame.addSeparator();
+//        mnGame.add(mntmGameOptions);
         
         
         
@@ -179,7 +184,7 @@ public class Minesweeper_MainWindow extends JFrame{
                         public void actionPerformed(ActionEvent e) {
                             tile.setText(attributes[a][b].getOutputValue());
                             tile.setBackground(Color.RED);
-                            loseGame(a, b);//x.loseGame(a, b, tileset);
+                            loseGame(a, b);
                             tile.setEnabled(false);
                             JOptionPane.showMessageDialog(null, "You clicked on a Mine, game over!",  "You Lose!", JOptionPane.INFORMATION_MESSAGE);
                 }});}
@@ -481,10 +486,6 @@ public class Minesweeper_MainWindow extends JFrame{
         return boardPanel;
     }
     
-    public void initializeMineAttributes(){
-    	
-        
-    }    
     
     private static void loseGame(int a, int b){
     	for(int y = 0; y < returnHeight(); y++){
@@ -493,6 +494,8 @@ public class Minesweeper_MainWindow extends JFrame{
     				tileset[y][x].setText(attributes[y][x].getOutputValue());
                     tileset[y][x].setBackground(Color.BLACK);
                     tileset[y][x].setEnabled(false);
+    			}else{
+    				tileset[y][x].setEnabled(false);
     			}
     		}
     	}
